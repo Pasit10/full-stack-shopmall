@@ -1,3 +1,4 @@
+-- Active: 1736962442902@@127.0.0.1@3306
 USE shopmall;
 
 
@@ -69,7 +70,7 @@ BEGIN
     DECLARE done INT DEFAULT 0;
 
     DECLARE cur CURSOR FOR
-        SELECT IDProduct, Quantity, IsSelects
+        SELECT IDProduct, Quantity, IsSelect
         FROM Cart
         WHERE IDCust = v_IDCust;
 
