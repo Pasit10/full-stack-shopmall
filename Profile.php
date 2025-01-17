@@ -123,6 +123,8 @@
             font-size: 24px;
             color: #333;
             margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
         }
 
         .history-content {
@@ -132,10 +134,29 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             background-color: #f1f1f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
         }
 
         .history-content p {
             margin: 10px 0;
+        }
+
+        .history-action-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .history-action-button:hover {
+            background: #0056b3;
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -193,9 +214,10 @@
                     $totalprice = $transaction["TotalPrice"];
 
                     echo '<div class="history-content">
-                        <p>เวลา '. $time .' </p>
-                        <p>ราคารวม '. $totalprice .'</p>
-                        <p>รายการ:</p>
+                        <div>
+                            <p>เวลา '. $time .' </p>
+                            <p>ราคารวม '. $totalprice .'</p>
+                            <p>รายการ:</p>
                     ';
                     $transactions_detail = GetTransactionDetail($id);
                     foreach ($transactions_detail as $trandetail){
@@ -208,7 +230,9 @@
                         ';
                     }
 
-                    echo '</div><br>';
+                    echo '</div>
+                          <a href="printreceipt.php?id='.$id.'"><button class="history-action-button">Download</button></a>
+                        </div><br>';
                 }
 
                 echo '</div>';

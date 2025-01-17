@@ -57,19 +57,20 @@ CREATE TABLE Cart(
 )
 
 DELIMITER //
-CREATE OR REPLACE PROCEDURE `AddTransactionDetails`(IN v_IDCust INT)
+CREATE OR REPLACE PROCEDURE AddTransactionDetails(IN v_IDCust INT)
 BEGIN
     DECLARE v_IDProduct INT;
     DECLARE v_Quantity INT;
     DECLARE v_IsSelect CHAR(1);
     DECLARE v_TransactionID INT;
     DECLARE v_TotalPrice DECIMAL(10, 2) DEFAULT 0;
+    DECLARE v_CurStockQty INT;
     DECLARE v_Seq INT DEFAULT 1;
     DECLARE done INT DEFAULT 0;
 
-    DECLARE cur CURSOR FOR 
-        SELECT IDProduct, Quantity, IsSelect 
-        FROM Cart 
+    DECLARE cur CURSOR FOR
+        SELECT IDProduct, Quantity, IsSelects
+        FROM Cart
         WHERE IDCust = v_IDCust;
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
@@ -87,14 +88,14 @@ BEGIN
         END IF;
 
         IF v_IsSelect = 'T' THEN
-            SET v_TotalPrice = v_TotalPrice + 
+            SET v_TotalPrice = v_TotalPrice +
                 (SELECT PricePerUnit FROM Stock WHERE IDProduct = v_IDProduct) * v_Quantity;
         END IF;
     END LOOP loop1;
 
     CLOSE cur;
 
-    INSERT INTO TRANSACTION (TotalPrice, Timestamp, IDCust) 
+    INSERT INTO TRANSACTION (TotalPrice, Timestamp, IDCust)
     VALUES (v_TotalPrice, NOW(), v_IDCust);
 
     SELECT IDTransaction INTO v_TransactionID FROM TRANSACTION ORDER BY IDTransaction DESC LIMIT 1;
@@ -120,6 +121,11 @@ BEGIN
                 v_Quantity,
                 v_IDProduct
             );
+
+            SELECT StockQty INTO v_CurStockQty FROM Stock WHERE IDProduct = v_IDProduct;
+            SET v_CurStockQty = v_CurStockQty - v_Quantity;
+            UPDATE Stock SET StockQty = v_CurStockQty WHERE IDProduct = v_IDProduct;
+
             SET v_Seq = v_Seq + 1;
         END IF;
     END LOOP loop2;

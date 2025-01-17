@@ -213,8 +213,6 @@
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (isset($_POST["IDProduct"])) {
             $IDProduct = intval($_POST["IDProduct"]);
-            $IDCust = $_SESSION["IDCust"];
-
             if (addCart($IDProduct)) {
                 //echo "<script type='text/javascript'>alert('Product added to cart successfully!');</script>";
             } else {

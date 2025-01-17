@@ -66,12 +66,20 @@
         $IDCust = $_SESSION["IDCust"];
         $qty = 1; // default = 1
 
+        $checkstock_sql = "SELECT StockQty FROM STOCK WHERE IDProduct = $IDProduct";
+        $stock_qty = $mysqli->query($checkstock_sql)->fetch_assoc()["StockQty"];
         // check primary key exits
         $sql = "SELECT * FROM Cart WHERE IDCust = $IDCust AND IDProduct = $IDProduct";
         $result = $mysqli->query($sql);
         if($result && $result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            $update_qty = $row["quantity"] + 1;
+            $update_qty = $row["Quantity"];
+            $update_qty += 1;
+
+            if ($update_qty > $stock_qty){
+                return false;
+            }
+
             $update_sql = "UPDATE Cart SET Quantity = $update_qty WHERE IDCust = $IDCust and IDProduct = $IDProduct";
             $update_stmt = $mysqli->prepare($update_sql);
 
@@ -187,5 +195,20 @@
             }
         }
         return $result_data;
+    }
+
+    function GetTransactionsByID($IDtranx){
+        $mysqli = $_SESSION["mysqli"];
+        $sql = "SELECT * FROM TRANSACTION WHERE IDtransaction = $IDtranx";
+        $result = mysqli_query($mysqli,$sql);
+        if (!$result) {
+            echo "Error in query execution: " . mysqli_error($mysqli);
+        }
+        if (mysqli_num_rows($result) > 0) {
+            $row = mysqli_fetch_assoc($result);
+            return $row;
+        } else {
+            return null;
+        }
     }
 ?>
