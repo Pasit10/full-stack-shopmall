@@ -1,6 +1,6 @@
-<?php
+<!-- <?php
     include "repo_admin";
-?>
+?> -->
 <!DOCTYPE html>
 <html lang="th">
 <head>
