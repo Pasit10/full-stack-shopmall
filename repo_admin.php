@@ -2,83 +2,76 @@
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
-
-    // Establish database connection
-    $mysqli = new mysqli("localhost", "root", "", "shopmall", 3306);
+    
+    $mysqli = mysqli_connect("localhost", "root", "", "shopmall", 3306);
     $_SESSION["mysqli"] = $mysqli;
 
-    function GetTranscation() {
+    function login($name, $paswd):bool{
         $mysqli = $_SESSION["mysqli"];
-
-        $sql = "SELECT * FROM TRANSACTION";
-
-        $result = $mysqli->query($sql);
-        if (!$result) {
-            echo "Error in query execution: " . mysqli_error($mysqli);
-        }
-
-        $result_data = [];
-
-        if ($result && $result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $result_data[] = $row;
-            }
-        } else {
-            // Optionally handle empty result or query error
-            if ($mysqli->error) {
-                error_log("MySQL error: " . $mysqli->error);
-            }
-        }
-        return $result_data;
-    }
-
-    function GetTransactionDetail($IDtranx){
-        $mysqli = $_SESSION["mysqli"];
-
-        $sql = "SELECT * FROM TransactionDetail INNER JOIN STOCK ON TransactionDetail.IDProduct = STOCK.IDProduct WHERE IDtransaction = $IDtranx";
-
-        $result = $mysqli->query($sql);
-        if (!$result) {
-            echo "Error in query execution: " . mysqli_error($mysqli);
-        }
-
-        $result_data = [];
-
-        if ($result && $result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $result_data[] = $row;
-            }
-        } else {
-            // Optionally handle empty result or query error
-            if ($mysqli->error) {
-                error_log("MySQL error: " . $mysqli->error);
-            }
-        }
-        return $result_data;
-    }
-
-    function GetTransactionStatus($IDStatus){
-        $mysqli = $_SESSION["mysqli"];
-        $sql = "SELECT Name FROM TransactionStatus WHERE IDStatus = $IDStatus";
-
-        $transaction_data = []
-        $result = $mysqli->query($sql);
-        $row = $result->fetch_assoc();
-        return $row;
-    }
-
-    function getCustomerByID($CustId){
-        $mysqli = $_SESSION["mysqli"];
-        $sql = "SELECT Custname, Sex, Address, Tel FROM Customer WHERE IDCust = $CustId";
+        $sql = "SELECT IDAdmin,password FROM Admin WHERE Adminname = '$name'";
         $result = mysqli_query($mysqli,$sql);
         if (!$result) {
             echo "Error in query execution: " . mysqli_error($mysqli);
+            return false;
         }
+
         if (mysqli_num_rows($result) > 0) {
             $row = mysqli_fetch_assoc($result);
-            return $row;
+            $password = $row['password'];
+            if ($password == $paswd) {
+                $_SESSION['IDAdmin'] =  $row['IDAdmin'];
+                return true;
+            }
         } else {
-            return null;
+            echo "Name or password is wrong";
+            return false;
         }
+        return false;
+    }
+
+    function GetTransactionAdmin() {
+        // Ensure the database connection is valid
+        $mysqli = $_SESSION["mysqli"];
+        if (!$mysqli) {
+            die("Database connection not found in session.");
+        }
+    
+        // SQL query
+        $sql = "SELECT 
+                    t.IDTransaction, 
+                    c.Custname AS customer_name, 
+                    GROUP_CONCAT(CONCAT(s.ProductName, ' (', td.QTY, ')') SEPARATOR '\n') AS products,
+                    SUM(td.QTY) AS total_quantity, 
+                    t.TotalPrice, 
+                    ts.Name AS status
+                FROM Transaction t
+                INNER JOIN Customer c ON t.IDCust = c.IDCust
+                INNER JOIN TransactionDetail td ON t.IDTransaction = td.IDtransaction
+                INNER JOIN Stock s ON td.IDProduct = s.IDProduct
+                INNER JOIN TransactionStatus ts ON t.IDStatus = ts.IDStatus
+                GROUP BY 
+                    t.IDTransaction, c.Custname, t.TotalPrice, ts.Name";
+    
+        // Execute query
+        $result = mysqli_query($mysqli, $sql);
+    
+        // Check for errors in SQL execution
+        if (!$result) {
+            die("SQL Error: " . mysqli_error($mysqli));
+        }
+    
+        // Process the result set
+        $transaction_Data = [];
+        if ($result->num_rows > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $transaction_Data[] = $row;
+            }
+        }
+    
+        return $transaction_Data;
+    }
+
+    function GetTransactionAdminLog() {
+
     }
 ?>

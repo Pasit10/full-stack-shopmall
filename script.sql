@@ -9,6 +9,7 @@ DROP TABLE CUSTOMER;
 DROP TABLE stock;
 DROP TABLE transactionlog;
 DROP TABLE transactionstatus;
+DROP TABLE admin;
 
 CREATE TABLE CUSTOMER(
     IDCust INT PRIMARY KEY AUTO_INCREMENT,
@@ -20,7 +21,7 @@ CREATE TABLE CUSTOMER(
 );
 
 CREATE TABLE ADMIN(
-    IDCust INT PRIMARY KEY AUTO_INCREMENT,
+    IDAdmin INT PRIMARY KEY AUTO_INCREMENT,
     AdminName VARCHAR(50),
     Password VARCHAR(256),
     TEL VARCHAR(20)
@@ -57,8 +58,10 @@ CREATE TABLE TransactionLog (
     Seq INT,
     Timestamp Timestamp,
     IDStatus INT NOT NULL,
+    IDAdmin INT,
     PRIMARY KEY (IDTransaction,Seq),
-    FOREIGN KEY (IDStatus) REFERENCES TransactionStatus(IDStatus)
+    FOREIGN KEY (IDStatus) REFERENCES TransactionStatus(IDStatus),
+    FOREIGN KEY (IDAdmin) REFERENCES ADMIN(IDADMIN)
 )
 
 

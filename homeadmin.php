@@ -1,3 +1,7 @@
+<?php 
+    require "repo_admin.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,6 +11,61 @@
     <title>Admin Access Order</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        html, body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fc;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            padding: 20px 5%;
+            background-color: #ffffff;
+            border-bottom: 3px solid #ddd;
+        }
+
+        .navbar a{
+            text-decoration: none;
+        }
+
+        .homepage a {
+            font-size: 28px;
+            color: #333;
+            text-decoration: none;
+            padding-left: 5%;
+            font-weight: 600;
+        }
+
+        .cart-profile-button {
+            background: #1e2a3a;
+            font-size: 16px;
+            color: white;
+            border-radius: 25px;
+            padding: 10px 20px;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .cart-profile-button:hover {
+            background: #0d1926;
+            transform: scale(1.05);
+        }
+
+        .button button {
+            font-size: 16px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .button button:hover {
+            background-color: #007bff;
+            color: white;
+            transform: scale(1.05);
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -105,6 +164,19 @@
 </head>
 
 <body>
+    <div class="navbar">
+            <div class="homepage">
+                <a href="homepage.php">Homepage</a>
+            </div>
+            <div class="ml-auto">
+                <a href="adminlog.php">
+                    <button type="button" class="btn btn-info cart-profile-button">
+                        <i class="fas fa-shopping-cart"></i>
+                        Log
+                    </button>
+                </a>
+            </div>
+        </div>
     <div class="container">
         <h1>Admin - Access Orders</h1>
         <table class="order-table">
@@ -121,50 +193,28 @@
             </thead>
             <tbody>
                 <?php
-                // Connect to the database
-                $conn = new mysqli("localhost", "root", "", "shopmall");
 
-                if ($conn->connect_error) {
-                    die("Connection failed: " . $conn->connect_error);
-                }
+                    $transactions = GetTransactionAdmin();
 
-                $sql = "SELECT t.IDTransaction, c.Custname AS customer_name, 
-                        GROUP_CONCAT(CONCAT(s.ProductName, ' (', td.QTY, ')') SEPARATOR '\n') AS products,
-                        SUM(td.QTY) AS total_quantity, 
-                        t.TotalPrice, ts.Name AS status
-                        FROM Transaction t
-                        INNER JOIN Customer c ON t.IDCust = c.IDCust
-                        INNER JOIN TransactionDetail td ON t.IDTransaction = td.IDtransaction
-                        INNER JOIN Stock s ON td.IDProduct = s.IDProduct
-                        INNER JOIN TransactionStatus ts ON t.IDStatus = ts.IDStatus
-                        GROUP BY t.IDTransaction, c.Custname, t.TotalPrice, ts.Name";
-
-                $result = $conn->query($sql);
-
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
+                    foreach ($transactions as $transaction) {
                         echo "<tr>";
-                        echo "<td>" . $row['IDTransaction'] . "</td>";
-                        echo "<td>" . $row['customer_name'] . "</td>";
-                        echo "<td style='white-space: pre-line;'>" . $row['products'] . "</td>";
-                        echo "<td>" . $row['total_quantity'] . "</td>";
-                        echo "<td>$" . number_format($row['TotalPrice'], 2) . "</td>";
-                        echo "<td>" . $row['status'] . "</td>";
+                        echo "<td>" . $transaction['IDTransaction'] . "</td>";
+                        echo "<td>" . $transaction['customer_name'] . "</td>";
+                        echo "<td style='white-space: pre-line;'>" . $transaction['products'] . "</td>";
+                        echo "<td>" . $transaction['total_quantity'] . "</td>";
+                        echo "<td>$" . number_format($transaction['TotalPrice'], 2) . "</td>";
+                        echo "<td>" . $transaction['status'] . "</td>";
                         echo "<td class='actions'>
                                 <button class='btn btn-edit'>Access</button>
                                 <button class='btn btn-delete'>Cancel</button>
                             </td>";
                         echo "</tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='7'>No orders found</td></tr>";
-                }
-
-                $conn->close();
                 ?>
             </tbody>
         </table>
     </div>
 </body>
 
+</html>
 </html>

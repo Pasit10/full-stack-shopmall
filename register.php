@@ -143,7 +143,7 @@
         $tel = $_POST["tel"];
 
         if(addCustomer($name,$passwd,$sex,$address,$tel)){
-            header("Location: login.php");
+            header("Location: index.php");
         }
     }
 ?>

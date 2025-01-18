@@ -26,6 +26,8 @@ VALUES
 INSERT INTO transactionstatus VALUES
 (1,"ยังไม่รับออเดอร์"),(2,"รับออเดอร์"),(3,"เริ่มแพคเกจ"),(4,"ส่งแพคเกจแล้ว"),(5,"ส่งให้ขนส่ง"),(6,"ยกเลิกออเดอร์")
 
+INSERT INTO admin VALUES (1,"admin","admin","09215485");
+
 -- ขก. หารูป
 
 -- INSERT INTO STOCK (ProductName, PricePerUnit, Detail, StockQty, ProductImagePath)

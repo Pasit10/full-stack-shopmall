@@ -93,9 +93,9 @@
 </head>
 
 <body>
-    <form method="POST" action="index.php">
+    <form method="POST" action="adminlogin.php">
         <h3>Shopping Mall</h3>
-        <h1>ฟอร์มการเข้าสู่ระบบ</h1>
+        <h1>ฟอร์มการเข้าสู่ระบบ admin</h1>
 
         <label for="name">ชื่อผู้ใช้</label>
         <input type="text" id="name" name="name" placeholder="กรอกชื่อของคุณ" required>
@@ -107,22 +107,20 @@
 
         <input type="submit" value="ยืนยัน">  
         <input type="reset" value="ยกเลิก"><br>
-        <a href="register.php"><p>สมัครสมาชิก</p></a>
-        <a href="adminlogin.php"<p>admin</p></a>
     </form>
 </body>
 
 </html>
 
 <?php
-    require "repo_customer.php";
+    require "repo_admin.php";
     if (isset($_POST["name"]) && isset($_POST["password"])) {
         $name = $_POST["name"];
         $passwd = $_POST["password"];
 
         if(login($name, $passwd)) {
             //echo "<h1> ". $_SESSION['IDCust'] ."</h1>";
-            header("Location: homepage.php");
+            header("Location: homeadmin.php");
         }
     }
 ?>
