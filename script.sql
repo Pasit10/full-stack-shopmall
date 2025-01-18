@@ -17,6 +17,13 @@ CREATE TABLE CUSTOMER(
     TEL VARCHAR(20)
 );
 
+CREATE TABLE ADMIN(
+    IDCust INT PRIMARY KEY AUTO_INCREMENT,
+    AdminName VARCHAR(50),
+    Password VARCHAR(256),
+    TEL VARCHAR(20)
+);
+
 CREATE TABLE STOCK (
     IDProduct INT PRIMARY KEY AUTO_INCREMENT,
     ProductName VARCHAR(50),
@@ -33,8 +40,8 @@ CREATE TABLE Transaction(
     Timestamp TIMESTAMP,
     VAT DECIMAL(8,2),
     IDCust INT NOT NULL,
-    IDStatus INT,
-    FOREIGN KEY (IDCust) REFERENCES Customer(IDCust)
+    IDStatus INT NOT NULL,
+    FOREIGN KEY (IDCust) REFERENCES Customer(IDCust),
     FOREIGN KEY (IDStatus) REFERENCES TransactionStatus(IDStatus)
 );
 
@@ -60,16 +67,20 @@ CREATE TABLE Cart(
     FOREIGN KEY (IDProduct) REFERENCES Stock(IDProduct)
 );
 
+DROP TABLE TransactionStatus;
+
 CREATE TABLE TransactionStatus (
     IDStatus INT,
-    Name VARCHAR(20)
+    Name VARCHAR(20),
+    PRIMARY KEY (IDStatus)
+    
 )
 
 CREATE TABLE TransactionLog (
-    IDTransaction INT,
+    IDTransaction INT NOT NULL,
     Seq INT,
     Timestamp Timestamp,
-    IDStatus INT,
+    IDStatus INT NOT NULL,
     PRIMARY KEY (IDTransaction,Seq),
     FOREIGN KEY (IDStatus) REFERENCES TransactionStatus(IDStatus)
 )
@@ -122,8 +133,8 @@ BEGIN
 
     CLOSE cur;
 
-    INSERT INTO TRANSACTION (TotalPrice, Timestamp, VAT, IDCust)
-    VALUES (v_TotalPrice, NOW(), v_TotalVAT, v_IDCust);
+    INSERT INTO TRANSACTION (TotalPrice, Timestamp, VAT, IDCust,IDStatus)
+    VALUES (v_TotalPrice, NOW(), v_TotalVAT, v_IDCust,1);
 
     SELECT IDTransaction INTO v_TransactionID FROM TRANSACTION ORDER BY IDTransaction DESC LIMIT 1;
 
@@ -154,7 +165,7 @@ BEGIN
                 v_VAT * v_Quantity
             );
 
-            SELECT StockQty INTO v_CurStockQty FROM Stock WHERE IDProduct = v_IDProduct;
+            SELECT StockQtyFrontEnd INTO v_CurStockQty FROM Stock WHERE IDProduct = v_IDProduct;
             SET v_CurStockQty = v_CurStockQty - v_Quantity;
             UPDATE Stock SET StockQtyFrontEnd = v_CurStockQty WHERE IDProduct = v_IDProduct;
 

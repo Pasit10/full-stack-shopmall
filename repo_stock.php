@@ -37,7 +37,7 @@
     function getCartByIDCust(){
         $mysqli = $_SESSION["mysqli"];
         $IDCust = $_SESSION["IDCust"];
-        $sql = "SELECT Cart.IDProduct,ProductName,PricePerUnit,Quantity,StockQty,IsSelect
+        $sql = "SELECT Cart.IDProduct,ProductName,PricePerUnit,Quantity,StockQtyFrontEnd,IsSelect
                 FROM Cart INNER JOIN STOCK ON Cart.IDProduct = STOCK.IDProduct
                 WHERE IDCust = $IDCust
                 ";
@@ -66,8 +66,8 @@
         $IDCust = $_SESSION["IDCust"];
         $qty = 1; // default = 1
 
-        $checkstock_sql = "SELECT StockQty FROM STOCK WHERE IDProduct = $IDProduct";
-        $stock_qty = $mysqli->query($checkstock_sql)->fetch_assoc()["StockQty"];
+        $checkstock_sql = "SELECT StockQtyFrontEnd FROM STOCK WHERE IDProduct = $IDProduct";
+        $stock_qty = $mysqli->query($checkstock_sql)->fetch_assoc()["StockQtyFrontEnd"];
         // check primary key exits
         $sql = "SELECT * FROM Cart WHERE IDCust = $IDCust AND IDProduct = $IDProduct";
         $result = $mysqli->query($sql);

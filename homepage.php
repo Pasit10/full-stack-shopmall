@@ -180,7 +180,7 @@
                     $pdname = $stock["ProductName"];
                     $pdprice = $stock["PricePerUnit"];
                     $pddetali = $stock["Detail"];
-                    $pdqty = $stock["StockQty"];
+                    $pdqty = $stock["StockQtyFrontEnd"];
                     $pdimgpath = $stock["ProductImagePath"];
 
                     echo '

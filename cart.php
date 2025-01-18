@@ -35,7 +35,7 @@
                 // ดึงข้อมูลสินค้าเพื่อรับ StockQty
                 $product = getProductByID($IDProduct); // ฟังก์ชันที่ดึงข้อมูลสินค้า
                 if ($product) {
-                    $stockQty = $product['StockQty'];
+                    $stockQty = $product['StockQtyFrontEnd'];
 
                     // ตรวจสอบจำนวนสินค้า
                     if ($newQty > $stockQty) {
@@ -225,7 +225,7 @@
                     $name = $item["ProductName"];
                     $priceperunit = $item["PricePerUnit"];
                     $qty = $item["Quantity"];
-                    $stocks_qty = $item["StockQty"];
+                    $stocks_qty = $item["StockQtyFrontEnd"];
                     $is_select = $item["IsSelect"];
                     $price = $priceperunit * $qty;
                     
