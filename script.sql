@@ -22,17 +22,20 @@ CREATE TABLE STOCK (
     ProductName VARCHAR(50),
     PricePerUnit DECIMAL(8,2),
     Detail VARCHAR(255),
-    StockQty INT,
+    StockQtyFrontEnd INT,
+    StockQtyBackEnd INT,
     ProductImagePath VARCHAR(255)
 );
 
-CREATE TABLE TRANSACTION(
+CREATE TABLE Transaction(
     IDTransaction INT PRIMARY KEY AUTO_INCREMENT,
     TotalPrice DECIMAL(8,2),
     Timestamp TIMESTAMP,
     VAT DECIMAL(8,2),
     IDCust INT NOT NULL,
+    IDStatus INT,
     FOREIGN KEY (IDCust) REFERENCES Customer(IDCust)
+    FOREIGN KEY (IDStatus) REFERENCES TransactionStatus(IDStatus)
 );
 
 CREATE TABLE TransactionDetail (
@@ -57,8 +60,21 @@ CREATE TABLE Cart(
     FOREIGN KEY (IDProduct) REFERENCES Stock(IDProduct)
 );
 
-DROP PROCEDURE IF EXISTS AddTransactionDetails;
+CREATE TABLE TransactionStatus (
+    IDStatus INT,
+    Name VARCHAR(20)
+)
 
+CREATE TABLE TransactionLog (
+    IDTransaction INT,
+    Seq INT,
+    Timestamp Timestamp,
+    IDStatus INT,
+    PRIMARY KEY (IDTransaction,Seq),
+    FOREIGN KEY (IDStatus) REFERENCES TransactionStatus(IDStatus)
+)
+
+DROP PROCEDURE IF EXISTS AddTransactionDetails;
 
 DELIMITER //
 CREATE OR REPLACE PROCEDURE AddTransactionDetails(IN v_IDCust INT)
@@ -140,7 +156,7 @@ BEGIN
 
             SELECT StockQty INTO v_CurStockQty FROM Stock WHERE IDProduct = v_IDProduct;
             SET v_CurStockQty = v_CurStockQty - v_Quantity;
-            UPDATE Stock SET StockQty = v_CurStockQty WHERE IDProduct = v_IDProduct;
+            UPDATE Stock SET StockQtyFrontEnd = v_CurStockQty WHERE IDProduct = v_IDProduct;
 
             SET v_Seq = v_Seq + 1;
         END IF;
