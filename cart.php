@@ -1,18 +1,64 @@
 <?php
     require "repo_stock.php";
 
+    // ฟังก์ชันดึงข้อมูลสินค้าโดยใช้ ID
+    function getProductByID($IDProduct) {
+        // เชื่อมต่อฐานข้อมูล
+        $conn = new mysqli("localhost", "root", "", "shopmall");
+
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // ค้นหาสินค้าตาม ID
+        $sql = "SELECT * FROM stock WHERE IDProduct = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $IDProduct);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $product = $result->fetch_assoc();
+        } else {
+            $product = null;
+        }
+
+        $stmt->close();
+        $conn->close();
+
+        return $product;
+    }
+
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (isset($_POST['qty'])) {
             foreach ($_POST['qty'] as $IDProduct => $newQty) {
-                $is_select = isset($_POST['selected_items'][$IDProduct]) ? 'T' : null;
-                UpdateCart($IDProduct, $newQty,$is_select);
+                // ดึงข้อมูลสินค้าเพื่อรับ StockQty
+                $product = getProductByID($IDProduct); // ฟังก์ชันที่ดึงข้อมูลสินค้า
+                if ($product) {
+                    $stockQty = $product['StockQty'];
+
+                    // ตรวจสอบจำนวนสินค้า
+                    if ($newQty > $stockQty) {
+                        $newQty = $stockQty; // จำกัดจำนวนให้อยู่ในสต็อก
+                    } elseif ($newQty < 1) {
+                        $newQty = 1; // อย่างน้อยต้องเลือก 1
+                    }
+
+                    // ตรวจสอบการเลือกสินค้า
+                    $is_select = isset($_POST['selected_items'][$IDProduct]) ? 'T' : null;
+
+                    // อัปเดตตะกร้าสินค้า
+                    UpdateCart($IDProduct, $newQty, $is_select);
+                }
             }
+
+            // รีเฟรชหน้า
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
         }
     }
 
-    if ($_SERVER['REQUEST_METHOD'] == 'GET'){
+    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         if (isset($_GET['id'])) {
             $IDProduct = $_GET['id'];
             DeleteCart($IDProduct);
@@ -49,7 +95,7 @@
             border-bottom: 3px solid #ddd;
         }
 
-        .navbar a{
+        .navbar a {
             text-decoration: none;
         }
 
@@ -122,6 +168,17 @@
             margin-right: 15px;
         }
     </style>
+    <script>
+        function validateQty(input, maxQty) {
+            if (input.value > maxQty) {
+                alert(`Quantity cannot exceed the available stock (${maxQty}).`);
+                input.value = maxQty; // ปรับให้เป็นจำนวนสูงสุด
+            } else if (input.value < 1) {
+                alert("Quantity must be at least 1.");
+                input.value = 1; // อย่างน้อยต้องมี 1
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -163,17 +220,16 @@
             
                 $Carts = getCartByIDCust();
                 $totalprice = 0;
-                foreach( $Carts as $item ) {
-                    //Cart.DProduct,ProductName,PricePerUnit,Quantity
+                foreach($Carts as $item) {
                     $id = $item["IDProduct"];
                     $name = $item["ProductName"];
                     $priceperunit = $item["PricePerUnit"];
                     $qty = $item["Quantity"];
                     $stocks_qty = $item["StockQty"];
                     $is_select = $item["IsSelect"];
-                    $price = $priceperunit *$qty;
+                    $price = $priceperunit * $qty;
                     
-                    if( $is_select == 'T') {
+                    if ($is_select == 'T') {
                         $totalprice += $price;
                     }
                     echo '
@@ -184,9 +240,9 @@
                                         <input type="checkbox" name="selected_items[' . $id . ']" class="checkbox" ' . ($is_select == 'T' ? 'checked="checked"' : '') . ' onchange="this.form.submit()">
                                     </td>
                                     <td>' . $name . '</td>
-                                    <td>$' . $price . '</td>
+                                    <td>$' . $priceperunit . '</td>
                                     <td>
-                                        <input type="number" name="qty[' . $id . ']" value="' . $qty . '" min="1" max="'.$stocks_qty.'"class="form-control" style="width: 80px;" onchange="this.form.submit();">
+                                        <input type="number" name="qty[' . $id . ']" value="' . $qty . '" min="1" max="' . $stocks_qty . '" class="form-control" style="width: 80px;" onchange="this.form.submit();" oninput="validateQty(this, ' . $stocks_qty . ')">
                                     </td>
                                     <td>$' . $price . '</td>
                                     <td>

@@ -222,14 +222,15 @@
                     $transactions_detail = GetTransactionDetail($id);
                     foreach ($transactions_detail as $trandetail){
                         $name = $trandetail["ProductName"];
-                        $price = $trandetail["PRICE"];
+                        $price_novat = $trandetail["PRICE_NOVAT"];
+                        $vat = $trandetail["VAT"];
                         $qty = $trandetail["QTY"];
 
                         echo '
-                            <p>'. $name .' จำนวน: '. $qty .' ราคา '. $price .'</p>
+                            <p>'. $name .' จำนวน: '. $qty .' ราคาไม่รวม vat '. $price_novat .'บาท vat '. $vat .'บาท</p>
                         ';
                     }
-
+                    
                     echo '</div>
                           <a href="printreceipt.php?id='.$id.'"><button class="history-action-button">Download</button></a>
                         </div><br>';
