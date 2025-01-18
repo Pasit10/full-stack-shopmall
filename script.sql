@@ -100,6 +100,7 @@ BEGIN
     DECLARE v_PricePerUnit DECIMAL(10, 2);
     DECLARE v_NOVAT DECIMAL(10, 2);
     DECLARE v_VAT DECIMAL(10, 2);
+    DECLARE v_Status INT;
     DECLARE v_Seq INT DEFAULT 1;
     DECLARE done INT DEFAULT 0;
 
@@ -133,8 +134,11 @@ BEGIN
 
     CLOSE cur;
 
-    INSERT INTO TRANSACTION (TotalPrice, Timestamp, VAT, IDCust,IDStatus)
-    VALUES (v_TotalPrice, NOW(), v_TotalVAT, v_IDCust,1);
+    SET v_Status = 1;
+
+    INSERT INTO TRANSACTION (TotalPrice, Timestamp, VAT, IDCust, IDStatus)
+    VALUES (v_TotalPrice, NOW(), v_TotalVAT, v_IDCust, 1);
+
 
     SELECT IDTransaction INTO v_TransactionID FROM TRANSACTION ORDER BY IDTransaction DESC LIMIT 1;
 

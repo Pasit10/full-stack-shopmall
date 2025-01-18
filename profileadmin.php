@@ -1,6 +1,6 @@
-<?php
+<!-- <?php
     include "repo_admin";
-?>
+?> -->
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -24,7 +24,7 @@
             <?php
                 $all_transcaction = GetTranscation();
                 foreach($all_transcaction as $transcaction) {
-                    $customer = 
+                    // $customer = 
                     echo "<tr>";
                     echo "<td>" . $transcaction['order_id'] . "</td>";
                     echo "<td>" . $row['customer_name'] . "</td>";
