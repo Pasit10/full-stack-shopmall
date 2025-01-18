@@ -51,15 +51,16 @@ $html = "
     $transactions_detail = GetTransactionDetail($id);
     foreach ($transactions_detail as $trandetail) {
         $lineTotal = $trandetail["PRICE_NOVAT"] * $trandetail["QTY"];
-        $vat = $trandetail["VAT"] * $trandetail["QTY"];
+        $vat = $trandetail["VAT"];
         $total += $lineTotal;
+    
         $html .= "
             <tr>
                 <td>{$trandetail['Seq']}</td>
-                <td>{$trandetail["ProductName"]}</td>
-                <td>{$trandetail["QTY"]}</td>
-                <td>" . number_format($trandetail["PRICE_NOVAT"], 2) . "</td>
-                <td>" . number_format($trandetail["Vat"],2) . "</td>
+                <td>{$trandetail['ProductName']}</td>
+                <td>{$trandetail['QTY']}</td>
+                <td>" . number_format($trandetail['PRICE_NOVAT'], 2) . "</td>
+                <td>" . number_format($vat, 2) . "</td>
                 <td>" . number_format($lineTotal, 2) . "</td>
             </tr>";
     }
@@ -81,5 +82,6 @@ $html = "
     // สร้าง PDF ด้วย mPDF
     $mpdf = new \Mpdf\Mpdf();
     $mpdf->WriteHTML($html);
-    $mpdf->Output("Transaction_{$transaction['IDTransaction']}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+    // $mpdf->Output("Transaction_{$transaction['IDTransaction']}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+    $mpdf->Output("Transaction_{$transaction['IDTransaction']}.pdf", "I");
 ?>

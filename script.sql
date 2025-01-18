@@ -7,6 +7,8 @@ DROP TABLE Cart;
 
 DROP TABLE CUSTOMER;
 DROP TABLE stock;
+DROP TABLE transactionlog;
+DROP TABLE transactionstatus;
 
 CREATE TABLE CUSTOMER(
     IDCust INT PRIMARY KEY AUTO_INCREMENT,
@@ -34,11 +36,37 @@ CREATE TABLE STOCK (
     ProductImagePath VARCHAR(255)
 );
 
+CREATE TABLE Cart(
+    IDCust INT NOT NULL,
+    IDProduct INT NOT NULL,
+    Quantity INT,
+    IsSelect CHAR(1),
+    PRIMARY KEY (IDCust, IDProduct),
+    FOREIGN KEY (IDCust) REFERENCES Customer(IDCust),
+    FOREIGN KEY (IDProduct) REFERENCES Stock(IDProduct)
+);
+
+CREATE TABLE TransactionStatus (
+    IDStatus INT,
+    Name VARCHAR(20),
+    PRIMARY KEY (IDStatus)
+)
+
+CREATE TABLE TransactionLog (
+    IDTransaction INT NOT NULL,
+    Seq INT,
+    Timestamp Timestamp,
+    IDStatus INT NOT NULL,
+    PRIMARY KEY (IDTransaction,Seq),
+    FOREIGN KEY (IDStatus) REFERENCES TransactionStatus(IDStatus)
+)
+
+
 CREATE TABLE Transaction(
     IDTransaction INT PRIMARY KEY AUTO_INCREMENT,
     TotalPrice DECIMAL(8,2),
     Timestamp TIMESTAMP,
-    VAT DECIMAL(8,2),
+    VAT DECIMAL(10,2),
     IDCust INT NOT NULL,
     IDStatus INT NOT NULL,
     FOREIGN KEY (IDCust) REFERENCES Customer(IDCust),
@@ -57,33 +85,6 @@ CREATE TABLE TransactionDetail (
     FOREIGN KEY (IDProduct) REFERENCES Stock(IDProduct)
 );
 
-CREATE TABLE Cart(
-    IDCust INT NOT NULL,
-    IDProduct INT NOT NULL,
-    Quantity INT,
-    IsSelect CHAR(1),
-    PRIMARY KEY (IDCust, IDProduct),
-    FOREIGN KEY (IDCust) REFERENCES Customer(IDCust),
-    FOREIGN KEY (IDProduct) REFERENCES Stock(IDProduct)
-);
-
-DROP TABLE TransactionStatus;
-
-CREATE TABLE TransactionStatus (
-    IDStatus INT,
-    Name VARCHAR(20),
-    PRIMARY KEY (IDStatus)
-    
-)
-
-CREATE TABLE TransactionLog (
-    IDTransaction INT NOT NULL,
-    Seq INT,
-    Timestamp Timestamp,
-    IDStatus INT NOT NULL,
-    PRIMARY KEY (IDTransaction,Seq),
-    FOREIGN KEY (IDStatus) REFERENCES TransactionStatus(IDStatus)
-)
 
 DROP PROCEDURE IF EXISTS AddTransactionDetails;
 
@@ -100,6 +101,7 @@ BEGIN
     DECLARE v_PricePerUnit DECIMAL(10, 2);
     DECLARE v_NOVAT DECIMAL(10, 2);
     DECLARE v_VAT DECIMAL(10, 2);
+    DECLARE v_Status INT;
     DECLARE v_Seq INT DEFAULT 1;
     DECLARE done INT DEFAULT 0;
 
@@ -110,7 +112,6 @@ BEGIN
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
-    -- Start transaction
     START TRANSACTION;
 
     OPEN cur;
@@ -124,21 +125,19 @@ BEGIN
 
         IF v_IsSelect = 'T' THEN
             SET v_PricePerUnit = (SELECT PricePerUnit FROM Stock WHERE IDProduct = v_IDProduct);
-            SET v_NOVAT = v_PricePerUnit * (100 / 107);
-            SET v_VAT = v_PricePerUnit * (7 / 107);
             SET v_TotalPrice = v_TotalPrice + (v_PricePerUnit * v_Quantity);
-            SET v_TotalVAT = v_TotalVAT + (v_VAT * v_Quantity);
         END IF;
     END LOOP loop1;
 
     CLOSE cur;
 
-    INSERT INTO TRANSACTION (TotalPrice, Timestamp, VAT, IDCust,IDStatus)
-    VALUES (v_TotalPrice, NOW(), v_TotalVAT, v_IDCust,1);
+    SET v_Status = 1;
 
-    SELECT IDTransaction INTO v_TransactionID FROM TRANSACTION ORDER BY IDTransaction DESC LIMIT 1;
+    INSERT INTO Transaction (TotalPrice, Timestamp, IDCust, IDStatus)
+    VALUES (v_TotalPrice, NOW(), v_IDCust, v_Status);
 
-    -- Reset handler for the second loop
+    SELECT IDTransaction INTO v_TransactionID FROM Transaction ORDER BY IDTransaction DESC LIMIT 1;
+
     SET done = 0;
 
     OPEN cur;
@@ -159,25 +158,28 @@ BEGIN
             VALUES (
                 v_TransactionID,
                 v_Seq,
-                v_NOVAT * v_Quantity,
+                ROUND(v_NOVAT * v_Quantity, 2),
                 v_Quantity,
                 v_IDProduct,
-                v_VAT * v_Quantity
+                ROUND(v_VAT * v_Quantity, 2)
             );
 
             SELECT StockQtyFrontEnd INTO v_CurStockQty FROM Stock WHERE IDProduct = v_IDProduct;
             SET v_CurStockQty = v_CurStockQty - v_Quantity;
             UPDATE Stock SET StockQtyFrontEnd = v_CurStockQty WHERE IDProduct = v_IDProduct;
 
+            SET v_TotalVAT = v_TotalVAT + (v_VAT * v_Quantity);
+
             SET v_Seq = v_Seq + 1;
         END IF;
     END LOOP loop2;
+
+    UPDATE Transaction SET VAT = ROUND(v_TotalVAT, 2) WHERE IDTransaction = v_TransactionID;
 
     DELETE FROM Cart WHERE IsSelect = 'T';
 
     CLOSE cur;
 
-    -- Commit transaction
     COMMIT;
 END
 //
