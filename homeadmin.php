@@ -1,5 +1,5 @@
-<?php 
-    require "repo_admin.php";
+<?php
+require "repo_admin.php";
 ?>
 
 <!DOCTYPE html>
@@ -10,6 +10,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Access Order</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         html, body {
             font-family: 'Poppins', sans-serif;
@@ -64,13 +67,6 @@
             background-color: #007bff;
             color: white;
             transform: scale(1.05);
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
         }
 
         .container {
@@ -165,18 +161,18 @@
 
 <body>
     <div class="navbar">
-            <div class="homepage">
-                <a href="homepage.php">Homepage</a>
-            </div>
-            <div class="ml-auto">
-                <a href="adminlog.php">
-                    <button type="button" class="btn btn-info cart-profile-button">
-                        <i class="fas fa-shopping-cart"></i>
-                        Log
-                    </button>
-                </a>
-            </div>
+        <div class="homepage">
+            <a href="homepage.php">Homepage</a>
         </div>
+        <div class="ml-auto">
+            <a href="cart.php">
+                <button type="button" class="btn btn-info cart-profile-button">
+                    <i class="fas fa-shopping-cart"></i>
+                    Cart
+                </button>
+            </a>
+        </div>
+    </div>
     <div class="container">
         <h1>Admin - Access Orders</h1>
         <table class="order-table">
@@ -194,22 +190,22 @@
             <tbody>
                 <?php
 
-                    $transactions = GetTransactionAdmin();
+                $transactions = GetTransactionAdmin();
 
-                    foreach ($transactions as $transaction) {
-                        echo "<tr>";
-                        echo "<td>" . $transaction['IDTransaction'] . "</td>";
-                        echo "<td>" . $transaction['customer_name'] . "</td>";
-                        echo "<td style='white-space: pre-line;'>" . $transaction['products'] . "</td>";
-                        echo "<td>" . $transaction['total_quantity'] . "</td>";
-                        echo "<td>$" . number_format($transaction['TotalPrice'], 2) . "</td>";
-                        echo "<td>" . $transaction['status'] . "</td>";
-                        echo "<td class='actions'>
+                foreach ($transactions as $transaction) {
+                    echo "<tr>";
+                    echo "<td>" . $transaction['IDTransaction'] . "</td>";
+                    echo "<td>" . $transaction['customer_name'] . "</td>";
+                    echo "<td style='white-space: pre-line;'>" . $transaction['products'] . "</td>";
+                    echo "<td>" . $transaction['total_quantity'] . "</td>";
+                    echo "<td>$" . number_format($transaction['TotalPrice'], 2) . "</td>";
+                    echo "<td>" . $transaction['status'] . "</td>";
+                    echo "<td class='actions'>
                                 <button class='btn btn-edit'>Access</button>
                                 <button class='btn btn-delete'>Cancel</button>
                             </td>";
-                        echo "</tr>";
-                    }
+                    echo "</tr>";
+                }
                 ?>
             </tbody>
         </table>
@@ -217,4 +213,5 @@
 </body>
 
 </html>
+
 </html>
