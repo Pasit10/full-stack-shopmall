@@ -183,21 +183,24 @@
                     $pdqty = $stock["StockQty"];
                     $pdimgpath = $stock["ProductImagePath"];
 
-                    if($pdqty == 0){
-                        continue;
-                    }
-
                     echo '
                         <div class="card">
                             <img src=".'.$pdimgpath.'"class="card-img">
                             <div class="card-body">
                                 <h5 class="card-title">'.$pdname.'</h5>
                                 <p class="card-detail">'.$pddetali.'</p>
-                                <form action="homepage.php" method="POST">
-                                    <input type="hidden" name="IDProduct" value="'.$id.'">
-                                    <button type="submit" class="btn btn-primary">Add to Cart</button>
-                                </form>
-                            </div>
+                                <p class="card-detail">stock: '.$pdqty.'</p>
+                        ';
+                    if($pdqty > 0){
+                        echo '
+                            <form action="homepage.php" method="POST">
+                                <input type="hidden" name="IDProduct" value="'.$id.'">
+                                <button type="submit" class="btn btn-primary">Add to Cart</button>
+                            </form>
+                        ';
+                    }
+
+                    echo '</div>
                         </div>
                     ';
                 }
