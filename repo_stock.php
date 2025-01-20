@@ -34,6 +34,27 @@
         return $stocks;
     }
 
+    
+    function getProductByID($IDProduct) {
+        $mysqli = $_SESSION["mysqli"];
+
+        // ค้นหาสินค้าตาม ID
+        $sql = "SELECT * FROM stock WHERE IDProduct = ?";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("i", $IDProduct);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $product = $result->fetch_assoc();
+        } else {
+            $product = null;
+        }
+
+        $stmt->close();
+        return $product;
+    }
+
     function getCartByIDCust(){
         $mysqli = $_SESSION["mysqli"];
         $IDCust = $_SESSION["IDCust"];

@@ -1,5 +1,29 @@
 <?php
-require "repo_admin.php";
+    require "repo_admin.php";
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (isset($_POST['IDTransaction'], $_POST['IDStatus'], $_POST['action'])) {
+            $idTranx = $_POST['IDTransaction'];
+            $idStatus = (int)$_POST['IDStatus'];
+            $action = $_POST['action'];
+
+            // Update the status based on the action
+            if ($action === 'accept') {
+                if ($idStatus < 5) {
+                    $idStatus += 1; // Increment status for "Accept"
+                }
+            }else if ($action === 'reject') {
+                if ($idStatus > 3) {
+                    $idStatus -= 1;
+                }
+            } else if ($action === 'cancel') {
+                $idStatus = 6;
+            }
+
+            UpdateTransaction($idTranx, $idStatus);
+            header("Location: " . $_SERVER['PHP_SELF']);
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -168,7 +192,7 @@ require "repo_admin.php";
             <a href="cart.php">
                 <button type="button" class="btn btn-info cart-profile-button">
                     <i class="fas fa-shopping-cart"></i>
-                    Cart
+                    History
                 </button>
             </a>
         </div>
@@ -200,10 +224,21 @@ require "repo_admin.php";
                     echo "<td>" . $transaction['total_quantity'] . "</td>";
                     echo "<td>$" . number_format($transaction['TotalPrice'], 2) . "</td>";
                     echo "<td>" . $transaction['status'] . "</td>";
-                    echo "<td class='actions'>
-                                <button class='btn btn-edit'>Access</button>
-                                <button class='btn btn-delete'>Cancel</button>
-                            </td>";
+
+                    if ($transaction['IDStatus'] >= 5){
+                        continue;
+                    }
+                    echo "  
+                            <td class='actions'>
+                                <form class='order-form' method='POST' action='homeadmin.php'>
+                                    <input type='hidden' name='IDTransaction' value='". $transaction['IDTransaction'] ."'>
+                                    <input type='hidden' name='IDStatus' value='". $transaction['IDStatus'] ."'>
+                                    <button class='btn btn-edit' type='submit' name='action' value='accept'>Accept</button>
+                                    <button class='btn btn-edit' type='submit' name='action' value= 'reject'>Reject</button>
+                                    <button class='btn btn-delete' type='submit' name='action' value='cancel'>Cancel</button>
+                                </form>
+                            </td>
+                        ";
                     echo "</tr>";
                 }
                 ?>
@@ -211,7 +246,5 @@ require "repo_admin.php";
         </table>
     </div>
 </body>
-
-</html>
 
 </html>

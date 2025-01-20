@@ -43,6 +43,7 @@
                     GROUP_CONCAT(CONCAT(s.ProductName, ' (', td.QTY, ')') SEPARATOR '\n') AS products,
                     SUM(td.QTY) AS total_quantity, 
                     t.TotalPrice, 
+                    t.IDStatus,
                     ts.Name AS status
                 FROM Transaction t
                 INNER JOIN Customer c ON t.IDCust = c.IDCust
@@ -69,6 +70,29 @@
         }
     
         return $transaction_Data;
+    }
+
+    function UpdateTransaction($IDtranx, $newIDStatus) {
+        $mysqli = $_SESSION["mysqli"];
+        $idAdmin = $_SESSION['IDAdmin'];
+        if (!$mysqli) {
+            die("Database connection not found in session.");
+        }
+        
+        $check_sql = "SELECT IDStatus FROM Transaction";
+        $result = mysqli_query($mysqli, $check_sql);
+        if (!$result) {
+            die("SQL Error: " . mysqli_error($mysqli));
+        }
+        
+        $update_status_sql = "CALL UpdateTransactionStatus($IDtranx,$newIDStatus,$idAdmin)";
+        $stmt = mysqli_prepare($mysqli, $update_status_sql);
+
+        if (!mysqli_stmt_execute($stmt)) {
+            return false;
+        }
+        
+        return true;
     }
 
     function GetTransactionAdminLog() {

@@ -1,33 +1,6 @@
 <?php
     require "repo_stock.php";
 
-    // ฟังก์ชันดึงข้อมูลสินค้าโดยใช้ ID
-    function getProductByID($IDProduct) {
-        // เชื่อมต่อฐานข้อมูล
-        $conn = new mysqli("localhost", "root", "", "shopmall");
-
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        // ค้นหาสินค้าตาม ID
-        $sql = "SELECT * FROM stock WHERE IDProduct = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $IDProduct);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            $product = $result->fetch_assoc();
-        } else {
-            $product = null;
-        }
-
-        $stmt->close();
-        $conn->close();
-
-        return $product;
-    }
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (isset($_POST['qty'])) {

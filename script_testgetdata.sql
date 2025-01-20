@@ -6,6 +6,7 @@ SELECT * FROM cart;
 SELECT * FROM stock;
 
 SELECT * FROM transaction;
+SELECT * FROM transactionlog;
 SELECT * FROM transactiondetail;
 CALL AddTransactionDetails(1);
 
@@ -52,3 +53,6 @@ INSERT INTO admin VALUES (1,"admin","admin","09215485");
 -- ('Smart Thermostat', 199.99, 'Energy-saving smart thermostat with app control', 25, '/images/smart_thermostat.jpg'),
 -- ('Portable Air Purifier', 99.99, 'Compact air purifier with HEPA filter', 40, '/images/air_purifier.jpg'),
 -- ('Gaming Console X', 499.00, 'Next-gen gaming console with 1TB storage', 20, '/images/gaming_console_x.jpg');
+
+SELECT ID FROM COMPANY
+WHERE EMPLOYEES > 10000 ORDER BY ID;

@@ -224,12 +224,3 @@
         }
     }
 ?>
-
-<!-- CREATE TABLE STOCK (
-    IDProduct INT PRIMARY KEY AUTO_INCREMENT,
-    ProductName VARCHAR(50),
-    PricePerUnit DECIMAL(8,2),
-    Detail VARCHAR(255),
-    StockQty INT,
-    ProductImagePath VARCHAR(255)
-); -->
