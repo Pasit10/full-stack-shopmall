@@ -1,29 +1,29 @@
 <?php
-    require "repo_admin.php";
+require "repo_admin.php";
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        if (isset($_POST['IDTransaction'], $_POST['IDStatus'], $_POST['action'])) {
-            $idTranx = $_POST['IDTransaction'];
-            $idStatus = (int)$_POST['IDStatus'];
-            $action = $_POST['action'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['IDTransaction'], $_POST['IDStatus'], $_POST['action'])) {
+        $idTranx = $_POST['IDTransaction'];
+        $idStatus = (int) $_POST['IDStatus'];
+        $action = $_POST['action'];
 
-            // Update the status based on the action
-            if ($action === 'accept') {
-                if ($idStatus < 5) {
-                    $idStatus += 1; // Increment status for "Accept"
-                }
-            }else if ($action === 'reject') {
-                if ($idStatus > 3) {
-                    $idStatus -= 1;
-                }
-            } else if ($action === 'cancel') {
-                $idStatus = 6;
+        // Update the status based on the action
+        if ($action === 'accept') {
+            if ($idStatus < 5) {
+                $idStatus += 1; // Increment status for "Accept"
             }
-
-            UpdateTransaction($idTranx, $idStatus);
-            header("Location: " . $_SERVER['PHP_SELF']);
+        } else if ($action === 'reject') {
+            if ($idStatus > 3) {
+                $idStatus -= 1;
+            }
+        } else if ($action === 'cancel') {
+            $idStatus = 6;
         }
+
+        UpdateTransaction($idTranx, $idStatus);
+        header("Location: " . $_SERVER['PHP_SELF']);
     }
+}
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +38,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        html, body {
+        html,
+        body {
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fc;
             margin: 0;
@@ -54,7 +55,7 @@
             border-bottom: 3px solid #ddd;
         }
 
-        .navbar a{
+        .navbar a {
             text-decoration: none;
         }
 
@@ -186,13 +187,13 @@
 <body>
     <div class="navbar">
         <div class="homepage">
-            <a href="homepage.php">Homepage</a>
+            <a href="homeadmin.php">Homepage</a>
         </div>
         <div class="ml-auto">
-            <a href="cart.php">
-                <button type="button" class="btn btn-info cart-profile-button">
-                    <i class="fas fa-shopping-cart"></i>
-                    History
+            <a href="selectReport.php">
+                <button type="button" class="cart-profile-button">
+                    <i class="fas fa-file-alt"></i>
+                    Report
                 </button>
             </a>
         </div>
@@ -225,14 +226,14 @@
                     echo "<td>$" . number_format($transaction['TotalPrice'], 2) . "</td>";
                     echo "<td>" . $transaction['status'] . "</td>";
 
-                    if ($transaction['IDStatus'] >= 5){
+                    if ($transaction['IDStatus'] >= 5) {
                         continue;
                     }
                     echo "  
                             <td class='actions'>
                                 <form class='order-form' method='POST' action='homeadmin.php'>
-                                    <input type='hidden' name='IDTransaction' value='". $transaction['IDTransaction'] ."'>
-                                    <input type='hidden' name='IDStatus' value='". $transaction['IDStatus'] ."'>
+                                    <input type='hidden' name='IDTransaction' value='" . $transaction['IDTransaction'] . "'>
+                                    <input type='hidden' name='IDStatus' value='" . $transaction['IDStatus'] . "'>
                                     <button class='btn btn-edit' type='submit' name='action' value='accept'>Accept</button>
                                     <button class='btn btn-edit' type='submit' name='action' value= 'reject'>Reject</button>
                                     <button class='btn btn-delete' type='submit' name='action' value='cancel'>Cancel</button>

@@ -11,18 +11,18 @@ SELECT * FROM transactiondetail;
 CALL AddTransactionDetails(1);
 
 
-INSERT INTO STOCK (ProductName, PricePerUnit, Detail, StockQtyFrontEnd,StockQtyBackEnd, ProductImagePath)
+INSERT INTO STOCK (ProductName, PricePerUnit, CostPerUnit, Detail, StockQtyFrontEnd, StockQtyBackEnd, ProductImagePath)
 VALUES
-('Laptop A15', 599.99, 'High-performance laptop with 16GB RAM and 512GB SSD', 25, 25,'/images/laptop_a15.png'),
-('Smartphone X5', 399.49, '5G-enabled smartphone with 128GB storage and triple camera', 50,50, '/images/smartphone_x5.jpg'),
-('Wireless Headphones', 79.99, 'Noise-cancelling over-ear headphones with Bluetooth', 100,100, '/images/headphones.jpg'),
-('Smartwatch Series 4', 199.99, 'Fitness tracker and smartwatch with heart rate monitor', 30,30, '/images/smartwatch_series4.png'),
-('Gaming Keyboard', 49.99, 'Mechanical RGB backlit gaming keyboard', 75,75, '/images/gaming_keyboard.png'),
-('4K TV 55-Inch', 799.00, 'Ultra HD Smart TV with HDR support and streaming apps', 20,20, '/images/4k_tv.jpg'),
-('Bluetooth Speaker', 29.99, 'Portable Bluetooth speaker with 10 hours of battery life', 150,150, '/images/bluetooth_speaker.jpg'),
-('Digital Camera Z10', 499.99, 'Mirrorless camera with 24MP sensor and 4K video recording', 15,15, '/images/digital_camera.png'),
-('External Hard Drive', 89.49, '2TB portable hard drive with USB 3.0', 60,60, '/images/external_hard_drive.jpg'),
-('Office Chair Deluxe', 129.99, 'Ergonomic office chair with lumbar support and adjustable height', 40,40, '/images/office_chair.jpg');
+('Laptop A15', 599.99, 450.00, 'High-performance laptop with 16GB RAM and 512GB SSD', 25, 25, '/images/laptop_a15.png'),
+('Smartphone X5', 399.49, 300.00, '5G-enabled smartphone with 128GB storage and triple camera', 50, 50, '/images/smartphone_x5.jpg'),
+('Wireless Headphones', 79.99, 50.00, 'Noise-cancelling over-ear headphones with Bluetooth', 100, 100, '/images/headphones.jpg'),
+('Smartwatch Series 4', 199.99, 150.00, 'Fitness tracker and smartwatch with heart rate monitor', 30, 30, '/images/smartwatch_series4.png'),
+('Gaming Keyboard', 49.99, 30.00, 'Mechanical RGB backlit gaming keyboard', 75, 75, '/images/gaming_keyboard.png'),
+('4K TV 55-Inch', 799.00, 600.00, 'Ultra HD Smart TV with HDR support and streaming apps', 20, 20, '/images/4k_tv.jpg'),
+('Bluetooth Speaker', 29.99, 20.00, 'Portable Bluetooth speaker with 10 hours of battery life', 150, 150, '/images/bluetooth_speaker.jpg'),
+('Digital Camera Z10', 499.99, 400.00, 'Mirrorless camera with 24MP sensor and 4K video recording', 15, 15, '/images/digital_camera.png'),
+('External Hard Drive', 89.49, 60.00, '2TB portable hard drive with USB 3.0', 60, 60, '/images/external_hard_drive.jpg'),
+('Office Chair Deluxe', 129.99, 100.00, 'Ergonomic office chair with lumbar support and adjustable height', 40, 40, '/images/office_chair.jpg');
 
 INSERT INTO transactionstatus VALUES
 (1,"ยังไม่รับออเดอร์"),(2,"รับออเดอร์"),(3,"เริ่มแพคเกจ"),(4,"ส่งแพคเกจแล้ว"),(5,"ส่งให้ขนส่ง"),(6,"ยกเลิกออเดอร์")

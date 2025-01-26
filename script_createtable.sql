@@ -33,10 +33,12 @@ CREATE TABLE STOCK (
     IDProduct INT PRIMARY KEY AUTO_INCREMENT,
     ProductName VARCHAR(50),
     PricePerUnit DECIMAL(8,2),
+    CostPerUnit DECIMAL(8,2),
     Detail VARCHAR(255),
     StockQtyFrontEnd INT,
     StockQtyBackEnd INT,
     ProductImagePath VARCHAR(255)
+    
 );
 
 CREATE TABLE Cart(

@@ -106,6 +106,15 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
+        .card-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
         .card-img {
             width: 100%;
             height: 250px;
@@ -182,15 +191,18 @@
                     $pddetali = $stock["Detail"];
                     $pdqty = $stock["StockQtyFrontEnd"];
                     $pdimgpath = $stock["ProductImagePath"];
-
+                
                     echo '
                         <div class="card">
                             <img src=".'.$pdimgpath.'"class="card-img">
                             <div class="card-body">
                                 <h5 class="card-title">'.$pdname.'</h5>
                                 <p class="card-detail">'.$pddetali.'</p>
-                                <p class="card-detail">stock: '.$pdqty.'</p>
-                        ';
+                                <p class="card-detail-row">
+                                    <span>Stock: '.$pdqty.'</span>
+                                    <span>Price: '.$pdprice.'</span>
+                                </p>
+                    ';
                     if($pdqty > 0){
                         echo '
                             <form action="homepage.php" method="POST">
@@ -199,11 +211,12 @@
                             </form>
                         ';
                     }
-
+                
                     echo '</div>
                         </div>
                     ';
                 }
+                
             ?>
         </div>
     </div>
