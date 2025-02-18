@@ -1,5 +1,5 @@
 <?php
-    require "repo_stock.php";
+    require "repository/repo_stock.php";
     if ($_SERVER['REQUEST_METHOD'] == 'POST'){
         if(AddTransaction()){
             header("Location: homepage.php");

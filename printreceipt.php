@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-require "repo_customer.php";
-require "repo_stock.php";
+require "repository/repo_customer.php";
+require "repository/repo_stock.php";
 
 // เริ่มสร้าง HTML สำหรับ PDF
 $id = $_GET["id"];

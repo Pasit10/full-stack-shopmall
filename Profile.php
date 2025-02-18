@@ -1,6 +1,6 @@
 <?php
-    require "repo_customer.php";
-    require "repo_stock.php";
+    require "repository/repo_customer.php";
+    require "repository/repo_stock.php";
 ?>
 
 <!DOCTYPE html>

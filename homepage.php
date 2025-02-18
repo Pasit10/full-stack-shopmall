@@ -1,5 +1,5 @@
 <?php
-    include "repo_stock.php";
+    include "repository/repo_stock.php";
 ?>
 
 <!DOCTYPE html>

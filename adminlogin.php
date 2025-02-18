@@ -113,7 +113,7 @@
 </html>
 
 <?php
-    require "repo_admin.php";
+    require "repository/repo_admin.php";
     if (isset($_POST["name"]) && isset($_POST["password"])) {
         $name = $_POST["name"];
         $passwd = $_POST["password"];

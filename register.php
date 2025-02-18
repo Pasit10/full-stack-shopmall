@@ -134,7 +134,7 @@
 </html>
 
 <?php
-    require "repo_customer.php";
+    require "repository/repo_customer.php";
     if (isset($_POST["name"]) && isset($_POST["password"]) && isset($_POST["sex"]) && isset($_POST["address"]) && isset($_POST["tel"])) {
         $name = $_POST["name"];
         $passwd = $_POST["password"];

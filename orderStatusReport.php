@@ -1,5 +1,5 @@
 <?php
-require "repo_report.php";
+require "repository/repo_report.php";
 require_once "vendor/autoload.php";
 
 use Mpdf\Mpdf;
